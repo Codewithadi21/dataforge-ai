@@ -1,0 +1,132 @@
+[
+  {
+    "question": "What is DataForge AI?",
+    "expected_intent": "guide",
+    "expected_source_prefix": "doc:"
+  },
+  {
+    "question": "How does DataPulse work?",
+    "expected_intent": "guide",
+    "expected_source_prefix": "doc:"
+  },
+  {
+    "question": "Explain paired replay with fixed cohort",
+    "expected_intent": "guide",
+    "expected_source_prefix": "doc:"
+  },
+  {
+    "question": "How do I install and start DataForge locally?",
+    "expected_intent": "guide",
+    "expected_source_prefix": "doc:"
+  },
+  {
+    "question": "What is incremental ETL design?",
+    "expected_intent": "guide",
+    "expected_source_prefix": "doc:"
+  },
+  {
+    "question": "Explain false positive alerts and false negatives",
+    "expected_intent": "guide",
+    "expected_source_prefix": "doc:"
+  },
+  {
+    "question": "How is BigQuery dry run safe?",
+    "expected_intent": "guide",
+    "expected_source_prefix": "doc:"
+  },
+  {
+    "question": "What is field level lineage?",
+    "expected_intent": "guide",
+    "expected_source_prefix": "doc:"
+  },
+  {
+    "question": "What is the difference between a schema contract and freshness?",
+    "expected_intent": "guide",
+    "expected_source_prefix": "doc:"
+  },
+  {
+    "question": "Explain incident DP-SYN-001",
+    "expected_intent": "incident",
+    "expected_source_prefix": "incident:"
+  },
+  {
+    "question": "Why did the churn model behave differently?",
+    "expected_intent": "incident",
+    "expected_source_prefix": "incident:"
+  },
+  {
+    "question": "Show incident drift statistics",
+    "expected_intent": "incident",
+    "expected_source_prefix": "incident:"
+  },
+  {
+    "question": "What changed in the churn model predictions?",
+    "expected_intent": "incident",
+    "expected_source_prefix": "incident:"
+  },
+  {
+    "question": "Give an RCA for the model anomaly",
+    "expected_intent": "incident",
+    "expected_source_prefix": "incident:"
+  },
+  {
+    "question": "Trace lineage of engagement_score",
+    "expected_intent": "lineage",
+    "expected_source_prefix": "lineage:"
+  },
+  {
+    "question": "What is upstream of engagement_score?",
+    "expected_intent": "lineage",
+    "expected_source_prefix": "lineage:"
+  },
+  {
+    "question": "Trace the paired_prediction_replay lineage",
+    "expected_intent": "lineage",
+    "expected_source_prefix": "lineage:"
+  },
+  {
+    "question": "Show lineage for churn prediction",
+    "expected_intent": "lineage",
+    "expected_source_prefix": "lineage:"
+  },
+  {
+    "question": "Write SQL to show customers whose predictions flipped",
+    "expected_intent": "sql",
+    "expected_source_prefix": "schema:"
+  },
+  {
+    "question": "Write a BigQuery query for prediction flips",
+    "expected_intent": "sql",
+    "expected_source_prefix": "schema:"
+  },
+  {
+    "question": "Count rows in baseline_customers using SQL",
+    "expected_intent": "sql",
+    "expected_source_prefix": "schema:"
+  },
+  {
+    "question": "Preview shifted_customers query",
+    "expected_intent": "sql",
+    "expected_source_prefix": "schema:"
+  },
+  {
+    "question": "How many total rows in paired_prediction_replay?",
+    "expected_intent": "sql",
+    "expected_source_prefix": "schema:"
+  },
+  {
+    "question": "Who won the cricket World Cup in 1983?",
+    "expected_intent": "unsupported",
+    "expect_unsupported": true
+  },
+  {
+    "question": "What is the capital city of Zimbabwe?",
+    "expected_intent": "unsupported",
+    "expect_unsupported": true
+  },
+  {
+    "question": "Recommend an Italian pasta recipe",
+    "expected_intent": "unsupported",
+    "expect_unsupported": true
+  }
+]

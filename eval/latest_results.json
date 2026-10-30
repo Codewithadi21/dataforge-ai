@@ -1,0 +1,217 @@
+{
+  "total": 26,
+  "passed": 26,
+  "cases": [
+    {
+      "question": "What is DataForge AI?",
+      "passed": true,
+      "actual_intent": "guide",
+      "sources": [
+        "doc:01_project_guide.md:1",
+        "doc:02_incidents_and_drift.md:5"
+      ]
+    },
+    {
+      "question": "How does DataPulse work?",
+      "passed": true,
+      "actual_intent": "guide",
+      "sources": [
+        "doc:01_project_guide.md:2",
+        "doc:01_project_guide.md:1"
+      ]
+    },
+    {
+      "question": "Explain paired replay with fixed cohort",
+      "passed": true,
+      "actual_intent": "guide",
+      "sources": [
+        "doc:01_project_guide.md:3",
+        "doc:01_project_guide.md:2",
+        "doc:02_incidents_and_drift.md:1"
+      ]
+    },
+    {
+      "question": "How do I install and start DataForge locally?",
+      "passed": true,
+      "actual_intent": "guide",
+      "sources": [
+        "doc:01_project_guide.md:4",
+        "doc:02_incidents_and_drift.md:5"
+      ]
+    },
+    {
+      "question": "What is incremental ETL design?",
+      "passed": true,
+      "actual_intent": "guide",
+      "sources": [
+        "doc:03_warehouse_and_lineage.md:3"
+      ]
+    },
+    {
+      "question": "Explain false positive alerts and false negatives",
+      "passed": true,
+      "actual_intent": "guide",
+      "sources": [
+        "doc:02_incidents_and_drift.md:4"
+      ]
+    },
+    {
+      "question": "How is BigQuery dry run safe?",
+      "passed": true,
+      "actual_intent": "guide",
+      "sources": [
+        "doc:03_warehouse_and_lineage.md:2",
+        "doc:01_project_guide.md:5"
+      ]
+    },
+    {
+      "question": "What is field level lineage?",
+      "passed": true,
+      "actual_intent": "guide",
+      "sources": [
+        "doc:03_warehouse_and_lineage.md:1"
+      ]
+    },
+    {
+      "question": "What is the difference between a schema contract and freshness?",
+      "passed": true,
+      "actual_intent": "guide",
+      "sources": [
+        "doc:01_project_guide.md:2",
+        "doc:02_incidents_and_drift.md:2",
+        "doc:02_incidents_and_drift.md:1"
+      ]
+    },
+    {
+      "question": "Explain incident DP-SYN-001",
+      "passed": true,
+      "actual_intent": "incident",
+      "sources": [
+        "incident:DP-SYN-001"
+      ]
+    },
+    {
+      "question": "Why did the churn model behave differently?",
+      "passed": true,
+      "actual_intent": "incident",
+      "sources": [
+        "incident:DP-SYN-001"
+      ]
+    },
+    {
+      "question": "Show incident drift statistics",
+      "passed": true,
+      "actual_intent": "incident",
+      "sources": [
+        "incident:DP-SYN-001"
+      ]
+    },
+    {
+      "question": "What changed in the churn model predictions?",
+      "passed": true,
+      "actual_intent": "incident",
+      "sources": [
+        "incident:DP-SYN-001"
+      ]
+    },
+    {
+      "question": "Give an RCA for the model anomaly",
+      "passed": true,
+      "actual_intent": "incident",
+      "sources": [
+        "incident:DP-SYN-001"
+      ]
+    },
+    {
+      "question": "Trace lineage of engagement_score",
+      "passed": true,
+      "actual_intent": "lineage",
+      "sources": [
+        "lineage:engagement_score"
+      ]
+    },
+    {
+      "question": "What is upstream of engagement_score?",
+      "passed": true,
+      "actual_intent": "lineage",
+      "sources": [
+        "lineage:engagement_score"
+      ]
+    },
+    {
+      "question": "Trace the paired_prediction_replay lineage",
+      "passed": true,
+      "actual_intent": "lineage",
+      "sources": [
+        "lineage:paired_prediction_replay"
+      ]
+    },
+    {
+      "question": "Show lineage for churn prediction",
+      "passed": true,
+      "actual_intent": "lineage",
+      "sources": [
+        "lineage:engagement_score"
+      ]
+    },
+    {
+      "question": "Write SQL to show customers whose predictions flipped",
+      "passed": true,
+      "actual_intent": "sql",
+      "sources": [
+        "schema:demo-project.datapulse_demo.paired_prediction_replay"
+      ]
+    },
+    {
+      "question": "Write a BigQuery query for prediction flips",
+      "passed": true,
+      "actual_intent": "sql",
+      "sources": [
+        "schema:demo-project.datapulse_demo.paired_prediction_replay"
+      ]
+    },
+    {
+      "question": "Count rows in baseline_customers using SQL",
+      "passed": true,
+      "actual_intent": "sql",
+      "sources": [
+        "schema:demo-project.datapulse_demo.baseline_customers"
+      ]
+    },
+    {
+      "question": "Preview shifted_customers query",
+      "passed": true,
+      "actual_intent": "sql",
+      "sources": [
+        "schema:demo-project.datapulse_demo.shifted_customers"
+      ]
+    },
+    {
+      "question": "How many total rows in paired_prediction_replay?",
+      "passed": true,
+      "actual_intent": "sql",
+      "sources": [
+        "schema:demo-project.datapulse_demo.paired_prediction_replay"
+      ]
+    },
+    {
+      "question": "Who won the cricket World Cup in 1983?",
+      "passed": true,
+      "actual_intent": "unsupported",
+      "sources": []
+    },
+    {
+      "question": "What is the capital city of Zimbabwe?",
+      "passed": true,
+      "actual_intent": "unsupported",
+      "sources": []
+    },
+    {
+      "question": "Recommend an Italian pasta recipe",
+      "passed": true,
+      "actual_intent": "unsupported",
+      "sources": []
+    }
+  ],
+  "note": "Routing/citation smoke evaluation only; not an independently verified factual accuracy metric."
+}

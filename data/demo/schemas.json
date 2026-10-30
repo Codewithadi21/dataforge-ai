@@ -1,0 +1,31 @@
+{
+  "demo-project.datapulse_demo.paired_prediction_replay": {
+    "description": "Synthetic sample schema; not a live BigQuery table",
+    "synthetic": true,
+    "columns": [
+      {"name": "customer_id", "type": "STRING", "sensitivity": "restricted"},
+      {"name": "baseline_prediction", "type": "INTEGER", "sensitivity": "public"},
+      {"name": "shifted_prediction", "type": "INTEGER", "sensitivity": "public"},
+      {"name": "baseline_score", "type": "FLOAT", "sensitivity": "public"},
+      {"name": "shifted_score", "type": "FLOAT", "sensitivity": "public"}
+    ]
+  },
+  "demo-project.datapulse_demo.baseline_customers": {
+    "description": "Synthetic example baseline customer features",
+    "synthetic": true,
+    "columns": [
+      {"name": "customer_id", "type": "STRING", "sensitivity": "restricted"},
+      {"name": "engagement_score", "type": "FLOAT", "sensitivity": "public"},
+      {"name": "tenure_months", "type": "INTEGER", "sensitivity": "public"}
+    ]
+  },
+  "demo-project.datapulse_demo.shifted_customers": {
+    "description": "Synthetic example shifted customer features",
+    "synthetic": true,
+    "columns": [
+      {"name": "customer_id", "type": "STRING", "sensitivity": "restricted"},
+      {"name": "engagement_score", "type": "FLOAT", "sensitivity": "public"},
+      {"name": "tenure_months", "type": "INTEGER", "sensitivity": "public"}
+    ]
+  }
+}

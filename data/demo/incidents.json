@@ -1,0 +1,29 @@
+[
+  {
+    "incident_id": "DP-SYN-001",
+    "detected_at": "2026-10-01T12:00:00Z",
+    "summary": "Illustrative churn prediction shift after changing the engagement feature definition",
+    "incident_type": "semantic_feature_shift",
+    "synthetic": true,
+    "metrics": {
+      "paired_cohort_size": 1000,
+      "prediction_flip_count": 82,
+      "prediction_flip_rate_percent": 8.2,
+      "engagement_psi": 0.26,
+      "engagement_ks_statistic": 0.12,
+      "schema_check_passed": true
+    },
+    "hypotheses": [
+      "A change in the engagement-score definition may explain the observed replay differences; this is not a proven root cause"
+    ],
+    "evidence_ids": ["replay:synthetic-001", "drift:synthetic-001", "contract:synthetic-001"],
+    "recommended_checks": [
+      "Compare before/after feature definitions and transform code",
+      "Re-run paired model replay on the same fixed cohort",
+      "Check feature distribution by cohort and compare PSI/KS",
+      "Request human approval before any pipeline or model changes"
+    ],
+    "requires_human_approval": true,
+    "source": "synthetic-fixture"
+  }
+]

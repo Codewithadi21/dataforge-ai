@@ -1,0 +1,22 @@
+{
+  "project_id": "datapulse-demo",
+  "synthetic": true,
+  "paths": [
+    {
+      "entity": "engagement_score",
+      "aliases": ["engagement", "engagement feature", "churn model", "churn prediction", "customer_churn_prediction"],
+      "nodes": [
+        "synthetic customer events", "raw engagement events", "curated engagement features", "engagement_score", "churn model", "prediction replay"
+      ],
+      "lineage_type": "declared_demo_metadata",
+      "limitations": "Demonstration only; not verified from DataPulse runtime lineage."
+    },
+    {
+      "entity": "paired_prediction_replay",
+      "aliases": ["model replay", "prediction flips", "replay table"],
+      "nodes": ["baseline customer snapshot", "shifted customer snapshot", "fixed churn model", "paired_prediction_replay"],
+      "lineage_type": "declared_demo_metadata",
+      "limitations": "Synthetic data-flow example."
+    }
+  ]
+}

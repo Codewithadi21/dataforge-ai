@@ -1,0 +1,10 @@
+{
+  "project_id": "datapulse-demo",
+  "name": "DataPulse AI — illustrative DataForge integration fixture",
+  "version": "synthetic-demo-1",
+  "owner": "portfolio-demo",
+  "environment": "synthetic-local",
+  "synthetic": true,
+  "allowed_sources": ["incidents.json", "lineage.json", "schemas.json", "knowledge/*.md"],
+  "description": "Sample data to demonstrate the proposed adapter. NOT exported from an actual DataPulse run."
+}
