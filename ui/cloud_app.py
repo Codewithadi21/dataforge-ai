@@ -3,7 +3,7 @@ import hmac
 import streamlit as st
 
 from dataforge.hosted import make_public_engine, ask_public
-from dataforge.models.hosted_qwen import grounded_hosted_summary, DEFAULT_MODEL
+from dataforge.models.hosted_qwen import grounded_hosted_summary, probe_hosted_qwen, DEFAULT_MODEL
 from dataforge.connectors.repo_refresh import refresh_public_repo_snapshot
 from dataforge.cloud_validation import (audit_bigquery_dry_runs,
                                          authorized_service_account_client)
@@ -54,7 +54,7 @@ def show_response(response):
 st.title("DataForge AI")
 st.caption("Evidence-grounded Data Engineering Copilot · Read-only public demo")
 
-st.sidebar.caption("Release: diagnostics-2026-10-31b · GitHub main")
+st.sidebar.caption("Release: provider-probe-2026-11-01 · GitHub main")
 st.sidebar.markdown("### Data source")
 selected = st.sidebar.selectbox("Project", [
     "DataPulse repository snapshot (seeded synthetic)",
@@ -92,6 +92,25 @@ if admin_ok and hf_token and mode in {"Ask DataForge", "Incident investigator", 
     use_model = st.sidebar.checkbox("Use hosted Qwen on this request", value=False)
     st.sidebar.caption("Hugging Face Inference Providers may consume credits. Maximum three model calls per browser session.")
     st.sidebar.caption("If a response stays deterministic, expand Evidence limitations for a safe failure category (HTTP status, timeout, or grounding rejection).")
+
+if qwen_ready:
+    st.sidebar.markdown("#### Hosted Qwen diagnostics")
+    st.sidebar.caption("One short provider call may consume inference credits. No incident data is sent.")
+    if st.sidebar.button("Test Qwen provider connection", type="secondary"):
+        if st.session_state.get("hosted_llm_uses", 0) >= 3:
+            st.session_state["qwen_probe"] = {"status": "session_limit",
+                "detail": "This browser session has used its three demo calls. Start a fresh session only if needed."}
+        else:
+            st.session_state["hosted_llm_uses"] = st.session_state.get("hosted_llm_uses", 0) + 1
+            with st.sidebar.spinner("Testing Hugging Face provider..."):
+                st.session_state["qwen_probe"] = probe_hosted_qwen(str(hf_token))
+    if "qwen_probe" in st.session_state:
+        diagnostic = st.session_state["qwen_probe"]
+        if diagnostic["status"] == "provider_responded":
+            st.sidebar.success(diagnostic["detail"])
+        else:
+            st.sidebar.error(diagnostic["detail"])
+        st.sidebar.caption("Diagnostic: " + str(diagnostic["status"]))
 
 if project_id == "datapulse-repo-snapshot":
     st.info("Connected to a **pinned export from the actual DataPulse GitHub repository**. The metrics are seeded synthetic examples, not live GCP results. Read-only; no modifications to DataPulse.")
