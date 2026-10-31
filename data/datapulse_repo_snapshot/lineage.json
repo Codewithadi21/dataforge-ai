@@ -1,0 +1,35 @@
+{
+  "paths": [
+    {
+      "entity": "engagement_events_30d",
+      "aliases": [
+        "engagement events",
+        "engagement score",
+        "engagement_score"
+      ],
+      "nodes": [
+        "raw.customer_engagement",
+        "curated.customer_features",
+        "model.customer_churn_v1",
+        "decision.retention_contact"
+      ],
+      "source_url": "https://github.com/Codewithadi21/aegis-real-time-supply-chain-ai/blob/ee4a0683f6f6ebf22da55385343a3b771f18b06c/datapulse-ai/configs/lineage.yml",
+      "synthetic": true
+    },
+    {
+      "entity": "decision.retention_contact",
+      "aliases": [
+        "retention decision",
+        "model to decision"
+      ],
+      "nodes": [
+        "raw.customer_engagement",
+        "curated.customer_features",
+        "model.customer_churn_v1",
+        "decision.retention_contact"
+      ],
+      "source_url": "https://github.com/Codewithadi21/aegis-real-time-supply-chain-ai/blob/ee4a0683f6f6ebf22da55385343a3b771f18b06c/datapulse-ai/configs/lineage.yml",
+      "synthetic": true
+    }
+  ]
+}

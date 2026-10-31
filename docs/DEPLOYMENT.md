@@ -1,50 +1,32 @@
-# GitHub + hosted DataForge demo
+# DataForge AI — Deployment Guide
 
-## 1. Create a separate GitHub repository
+Repository: https://github.com/Codewithadi21/dataforge-ai
 
-Create an **empty** public GitHub repository named `dataforge-ai` in the `Codewithadi21` account. Do not add a generated README or license to the empty repository, as the project includes its own. Upload the contents of the `dataforge-ai/` directory **to repository root** (not the ZIP itself). Use the connected GitHub app to commit all files when the new repository becomes accessible, or upload through GitHub's **Add file → Upload files** if necessary.
+## Step 1. Streamlit Community Cloud (public read-only baseline)
 
-**Do not modify an existing DataPulse repository.** DataForge and DataPulse remain separate and communicate through a versioned read-only adapter when real exports are approved and validated.
+- Select the `Codewithadi21/dataforge-ai` repository, `main` branch and `ui/cloud_app.py` entrypoint.
+- No credentials required for the public baseline.
+- The default project is an upstream-repository seeded synthetic snapshot, not a live Google Cloud dataset.
+- The `Refresh DataPulse GitHub evidence` button makes a fixed read-only GitHub API call for the checked-in seeded results; if it fails, the pinned snapshot remains.
+- Model inference and GCP resource checks are disabled for anonymous visitors.
 
-## 2. Deploy an interactive public demo (no laptop or local API required)
+## Step 2. Hosted Qwen (only with admin authorization)
 
-1. Sign into https://share.streamlit.io with the GitHub account.
-2. Choose **Create app → Yup, I have an app**.
-3. Repository: `Codewithadi21/dataforge-ai`; branch: `main`.
-4. Main file path: `ui/cloud_app.py`.
-5. In advanced settings select Python 3.11 if offered (tests use 3.11). There are **no secrets** to enter.
-6. Choose a free/available app subdomain and press **Deploy**.
-7. Test **Incident investigator**, **Lineage explorer**, and **SQL planner** on the resulting `*.streamlit.app` URL.
+In **Streamlit App settings → Secrets**, enter *private* (not checked-in) TOML values:
 
-The repository-root `requirements.txt` installs `. [ui]` as an editable local package (`-e .[ui]`); the hosted entrypoint imports the project directly. It does not require the FastAPI server.
-
-## 3. What the public link actually runs
-
-The public app intentionally uses **only synthetic fixtures, TF-IDF retrieval and deterministic incident/SQL logic**. It does not load Qwen weights, execute BigQuery jobs, read private exports, accept credentials, or make production changes. This is a useful public working demo but **not a remotely hosted LLM inference endpoint**.
-
-## 4. Separate Qwen-powered hosted inference (future integration)
-
-To give the public app actual LLM responses, provision a remote inference service (e.g. Hugging Face inference/Spaces, a managed inference API, or a hosted VM), then:
-
-- Choose the model and verify its license, compute requirements, serving cost, and latency.
-- Never expose endpoint credentials to website visitors or GitHub.
-- Add server-side authentication, rate limits and content/size restrictions before exposing the API publicly.
-- Design a server-side only model adapter and update the public UI to use it, preserving deterministic evidence and source citations.
-- Measure on the existing frozen evaluation set; document failures and timeouts.
-
-A free Colab runtime is temporary and cannot be relied upon as a stable public endpoint. Streamlit Cloud does not automatically supply the resources to run the proposed Qwen 1.5B model. Do not label the public demo "Qwen-powered" until inference is connected and tested.
-
-## 5. Cross-project connection plan
-
-At first, DataForge uses synthetic DataPulse-style incident/schema/lineage fixtures. To connect actual DataPulse, export approved/versioned JSON via an integration contract and connect it in a protected backend; verify source identifiers, timestamps, and allow-list permissions. Do not share production cloud credentials or private datasets in a public demo.
-
-## 6. Test deployment prep
-
-```bash
-python -m pip install -e '.[dev,ui]'
-python -m pytest -q
-python -m dataforge.cli eval --output eval/latest_results.json
-python -m streamlit run ui/cloud_app.py
+```toml
+HF_TOKEN = "hf_your_private_hf_token"
+ADMIN_DEMO_PASSWORD = "your_private_unique_admin_password"
 ```
 
-This tests the application locally for development, but the hosted app runs independently of the local machine after deployment.
+Obtain a Hugging Face token with Inference Providers permission. In the sidebar, enter your admin password and choose `Use hosted Qwen on this request`. The app calls a fixed Hugging Face router endpoint for a Qwen model (`Qwen/Qwen3-4B-Instruct-2507:nscale`) and uses the deterministic source-grounded answer if the request fails or grounding checks reject the output. Provider calls may consume credits. Max 3 calls/browser session (not an account-level quota); keep the admin password private.
+
+## Step 3. BigQuery validation (recommended Colab path)
+
+Open [the DataForge GCP audit Colab notebook](../notebooks/02_DataForge_GCP_Audit_Colab.ipynb), authenticate using your Google login in Colab, enter your GCP project ID, then run the read-only metadata and dry-run checks. No service-account key needed for this workflow. The optional billable SELECT aggregate cell is off by default and requires explicit approval.
+
+Advanced optional **admin-only Streamlit** metadata/dry-run validation can use `GCP_PROJECT_ID` and a `[GCP_SERVICE_ACCOUNT]` block in private Streamlit Secrets; avoid a long-lived service-account key on a public web app unless absolutely necessary. No service-account keys should ever be committed to GitHub.
+
+## Do not overclaim
+
+A public hosted UI is not proof of live Qwen inference or live BigQuery execution. Verify each external system in its own runtime, retain the citation and trace metadata, and label upstream DataPulse data as seeded synthetic. See [Phase 2–4 status and limitations](PHASE2_3_4.md).

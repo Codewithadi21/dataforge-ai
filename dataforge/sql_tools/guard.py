@@ -62,11 +62,14 @@ def draft_sql(question: str, adapter: ProjectAdapter) -> str:
         table = next((t for t in tables if "paired_prediction_replay" in t), table)
         schema = adapter.get_schema(table) or {}
         names = {x["name"] for x in schema.get("columns", [])}
-        required = {"customer_id", "baseline_prediction", "shifted_prediction"}
-        if not required <= names:
-            raise SQLPolicyError("Prediction flip template requires known replay columns")
-        return ("SELECT customer_id, baseline_prediction, shifted_prediction "
-                f"FROM `{table}` WHERE baseline_prediction != shifted_prediction LIMIT 100")
+        if {"customer_id", "baseline_prediction", "shifted_prediction"} <= names:
+            before, after = "baseline_prediction", "shifted_prediction"
+        elif {"customer_id", "predicted_churn_before", "predicted_churn_after"} <= names:
+            before, after = "predicted_churn_before", "predicted_churn_after"
+        else:
+            raise SQLPolicyError("Prediction flip template requires approved replay columns")
+        return (f"SELECT customer_id, {before}, {after} "
+                f"FROM `{table}` WHERE {before} != {after} LIMIT 100")
     if any(s in q for s in ("count", "how many", "total rows")):
         return f"SELECT COUNT(*) AS row_count FROM `{table}`"
     schema = adapter.get_schema(table) or {}
