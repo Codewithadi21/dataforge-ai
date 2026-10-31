@@ -5,6 +5,7 @@ import sys
 from types import SimpleNamespace, ModuleType
 
 import pytest
+import requests
 
 from dataforge.cloud_validation import audit_bigquery_dry_runs, validate_project_id
 from dataforge.connectors.repo_refresh import refresh_public_repo_snapshot
@@ -187,3 +188,74 @@ def test_pubsub_metadata_only(monkeypatch):
     assert result["status"]=="passed"
     assert result["messages_published"]==0
     assert result["messages_acknowledged"]==0
+
+
+@pytest.mark.parametrize("status,expected", [
+    (401, "token authentication"),
+    (402, "inference credits"),
+    (403, "token permission"),
+    (404, "model or inference provider"),
+    (429, "rate limit"),
+    (503, "temporarily unavailable"),
+])
+def test_hosted_qwen_reports_safe_http_failure(status, expected):
+    answer = ask_public(make_public_engine(), "Explain incident DP-REPO-SYN-001",
+                        project_id="datapulse-repo-snapshot")
+    def provider_failure(url, **kwargs):
+        http = requests.Response()
+        http.status_code = status
+        def fail():
+            raise requests.HTTPError("unsafe private provider body", response=http)
+        return SimpleNamespace(status_code=status, raise_for_status=fail)
+    out = grounded_hosted_summary(answer, "Explain incident", "hf_private_secret123",
+                                  post=provider_failure)
+    assert out.model_backend == "deterministic"
+    note = out.uncertainty_notes[-1]
+    assert "HTTP " + str(status) in note
+    assert expected in note
+    assert "unsafe private provider body" not in note
+    assert "hf_private_secret123" not in note
+
+
+def test_hosted_qwen_normalizes_thousands_separator_and_known_percentage():
+    answer = ask_public(make_public_engine(), "Explain incident DP-REPO-SYN-001",
+                        project_id="datapulse-repo-snapshot")
+    def response_fn(url, **kwargs):
+        text = ("The synthetic record shows 340 flips in 1,500 replay customers "
+                "(22.67%). The feature definition is a hypothesis, not confirmed.")
+        return SimpleNamespace(
+            raise_for_status=lambda: None,
+            json=lambda: {"choices": [{"message": {"content": text}}]},
+        )
+    out = grounded_hosted_summary(answer, "Explain incident", "hf_fake_test_token",
+                                  post=response_fn)
+    assert out.model_backend == "qwen-hosted"
+    assert "22.67%" in out.answer
+    assert "Verified record" in out.answer
+
+
+def test_hosted_qwen_rejection_explains_numeric_grounding_not_provider():
+    answer = ask_public(make_public_engine(), "Explain incident DP-REPO-SYN-001",
+                        project_id="datapulse-repo-snapshot")
+    def bad_number(url, **kwargs):
+        return SimpleNamespace(
+            raise_for_status=lambda: None,
+            json=lambda: {"choices": [{"message": {"content": "The incident harmed 999999 people."}}]},
+        )
+    out = grounded_hosted_summary(answer, "Explain incident", "hf_fake_test_token",
+                                  post=bad_number)
+    assert out.model_backend == "deterministic"
+    assert "grounding check rejected" in out.uncertainty_notes[-1]
+    assert "999999" not in out.answer
+
+
+def test_hosted_qwen_network_timeout_is_safely_categorized():
+    answer = ask_public(make_public_engine(), "Explain incident DP-REPO-SYN-001",
+                        project_id="datapulse-repo-snapshot")
+    def timeout(url, **kwargs):
+        raise requests.Timeout("private request URL or token should stay hidden")
+    out = grounded_hosted_summary(answer, "Explain incident", "hf_fake_test_token",
+                                  post=timeout)
+    assert out.model_backend == "deterministic"
+    assert "network timeout" in out.uncertainty_notes[-1]
+    assert "private request" not in out.uncertainty_notes[-1]

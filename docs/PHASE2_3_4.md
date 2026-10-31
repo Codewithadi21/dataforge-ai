@@ -33,6 +33,22 @@ The default supported routing model is `Qwen/Qwen3-4B-Instruct-2507:nscale` on H
 
 Qwen is used **only to interpret deterministic, already-retrieved synthetic evidence**. It cannot propose a new SQL query for execution. Source citations and authoritative numbers remain attached. A conservative numeric gate and error fallback help, but do not guarantee zero hallucinations.
 
+### Hosted Qwen troubleshooting (without sharing secrets)
+
+`Hosted Qwen: Ready for a live test` means the HF token and matching admin password are present in private Streamlit Secrets; it does not prove inference works.
+
+Choose **Ask DataForge**, enable **Use hosted Qwen on this request**, ask about the seeded DataPulse incident, and expand **Evidence limitations**. A successful inference shows `Backend: qwen-hosted`. If the answer remains deterministic, it displays a safe category without printing provider response bodies or credentials:
+
+- HTTP 401: token authentication rejected; check the privately saved token.
+- HTTP 402: billing or available inference credits; check your Hugging Face account.
+- HTTP 403: token permissions or provider authorization; check Inference Providers permission.
+- HTTP 404: model/provider routing unavailable; verify model availability.
+- HTTP 429: rate/usage limit; avoid repeated retries.
+- HTTP 5xx or network timeout: transient provider issue.
+- Grounding-check rejection: the model responded but introduced unsupported numeric claims; the evidence-first response was retained. Exact thousands separators and exact `prediction_flip_rate` percentage conversion are permitted.
+
+These errors are **diagnostic categories**, not proof of a specific account problem. Do not paste tokens, error response bodies or private Streamlit Secrets into screenshots or issues. The three-call UI limit is not an account-wide cost cap.
+
 ## Phase 3 — DataPulse repository integration
 
 Source repository: https://github.com/Codewithadi21/aegis-real-time-supply-chain-ai/tree/main/datapulse-ai
