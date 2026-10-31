@@ -90,6 +90,7 @@ use_model = False
 if admin_ok and hf_token and mode in {"Ask DataForge", "Incident investigator", "Lineage explorer", "Project guide"}:
     use_model = st.sidebar.checkbox("Use hosted Qwen on this request", value=False)
     st.sidebar.caption("Hugging Face Inference Providers may consume credits. Maximum three model calls per browser session.")
+    st.sidebar.caption("If a response stays deterministic, expand Evidence limitations for a safe failure category (HTTP status, timeout, or grounding rejection).")
 
 if project_id == "datapulse-repo-snapshot":
     st.info("Connected to a **pinned export from the actual DataPulse GitHub repository**. The metrics are seeded synthetic examples, not live GCP results. Read-only; no modifications to DataPulse.")
