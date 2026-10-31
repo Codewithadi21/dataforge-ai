@@ -259,3 +259,53 @@ def test_hosted_qwen_network_timeout_is_safely_categorized():
     assert out.model_backend == "deterministic"
     assert "network timeout" in out.uncertainty_notes[-1]
     assert "private request" not in out.uncertainty_notes[-1]
+
+
+def test_provider_probe_reports_success_without_echoing_output_or_token():
+    from dataforge.models.hosted_qwen import probe_hosted_qwen
+    def fake(url, **kwargs):
+        assert url.endswith("/v1/chat/completions")
+        assert kwargs["json"]["max_tokens"] == 12
+        assert "DP-REPO" not in str(kwargs["json"])
+        return SimpleNamespace(raise_for_status=lambda: None,
+            json=lambda: {"choices": [{"message": {"content": "READY private text"}}]})
+    result = probe_hosted_qwen("hf_test_private_token", post=fake)
+    assert result["status"] == "provider_responded"
+    assert "private" not in str(result)
+    assert "hf_test_private_token" not in str(result)
+
+
+@pytest.mark.parametrize("status,expected", [
+    (401, "token authentication"), (402, "credits"), (403, "permission"),
+    (404, "model or inference provider"), (429, "rate limit"), (503, "temporarily unavailable"),
+])
+def test_provider_probe_safe_http_categories(status, expected):
+    from dataforge.models.hosted_qwen import probe_hosted_qwen
+    def fake(url, **kwargs):
+        response = requests.Response()
+        response.status_code = status
+        def error():
+            raise requests.HTTPError("PRIVATE PROVIDER RESPONSE", response=response)
+        return SimpleNamespace(status_code=status, raise_for_status=error)
+    result = probe_hosted_qwen("hf_test_private_token", post=fake)
+    assert result["status"] == "provider_http_error"
+    assert result["http_status"] == status
+    assert expected in result["detail"]
+    assert "PRIVATE" not in str(result)
+    assert "hf_test_private_token" not in str(result)
+
+
+def test_provider_probe_reports_invalid_provider_format_safely():
+    from dataforge.models.hosted_qwen import probe_hosted_qwen
+    result = probe_hosted_qwen("hf_test_private_token",
+        post=lambda url, **kwargs: SimpleNamespace(
+            raise_for_status=lambda: None, json=lambda: {"message": "SECRET"}
+        ))
+    assert result["status"] == "provider_response_invalid"
+    assert "SECRET" not in str(result)
+
+
+def test_provider_probe_requires_token_without_network():
+    from dataforge.models.hosted_qwen import probe_hosted_qwen
+    result = probe_hosted_qwen("", post=lambda *args, **kwargs: pytest.fail("Should not call provider"))
+    assert result["status"] == "token_missing"

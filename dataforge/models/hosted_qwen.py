@@ -141,3 +141,51 @@ def grounded_hosted_summary(response: AskResponse, question: str, token: str,
             "Hosted Qwen encountered an unexpected error. Deterministic evidence retained."
         )
     return response
+
+
+def probe_hosted_qwen(token: str, model: str = DEFAULT_MODEL, timeout: int = 20,
+                      post: Callable | None = None) -> dict:
+    """One minimal, explicit, potentially billable inference call.
+
+    Returns safe categories only. Never returns tokens, raw provider errors,
+    model text, headers, account information, or user content.
+    """
+    if not token or len(token) < 8:
+        return {"status": "token_missing", "detail": "Hugging Face token is missing or invalidly formatted."}
+    request = {
+        "model": model,
+        "stream": False,
+        "max_tokens": 12,
+        "messages": [{"role": "user", "content": "Reply with the single word READY."}],
+    }
+    try:
+        response = (post or requests.post)(
+            HF_ROUTER, json=request,
+            headers={"Authorization": "Bearer " + token, "Content-Type": "application/json"},
+            timeout=min(30, max(5, timeout)),
+        )
+        response.raise_for_status()
+        payload = response.json()
+        message = payload["choices"][0]["message"]["content"]
+        if not isinstance(message, str) or not message.strip():
+            return {"status": "provider_response_invalid", "detail": "Provider replied, but no usable text was returned."}
+        return {"status": "provider_responded",
+                "detail": "Hugging Face authenticated and returned a model completion; evidence grounding was not tested."}
+    except requests.HTTPError as exc:
+        code = getattr(getattr(exc, "response", None), "status_code", None)
+        if code is None:
+            code = getattr(locals().get("response"), "status_code", None)
+        return {"status": "provider_http_error", "http_status": code,
+                "detail": _http_failure_note(code)}
+    except requests.Timeout:
+        return {"status": "provider_timeout", "detail": "Provider request timed out; no result was accepted."}
+    except requests.ConnectionError:
+        return {"status": "provider_network_error", "detail": "Could not establish a connection to the model provider."}
+    except requests.RequestException:
+        return {"status": "provider_request_error", "detail": "Provider network request failed."}
+    except (ValueError, KeyError, IndexError, TypeError):
+        return {"status": "provider_response_invalid",
+                "detail": "Provider response format was invalid or incomplete."}
+    except Exception:
+        return {"status": "provider_unexpected_error",
+                "detail": "An unexpected inference error occurred; credentials and raw response are hidden."}
