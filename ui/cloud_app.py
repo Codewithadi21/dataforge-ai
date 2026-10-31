@@ -54,6 +54,7 @@ def show_response(response):
 st.title("DataForge AI")
 st.caption("Evidence-grounded Data Engineering Copilot · Read-only public demo")
 
+st.sidebar.caption("Release: diagnostics-2026-10-31b · GitHub main")
 st.sidebar.markdown("### Data source")
 selected = st.sidebar.selectbox("Project", [
     "DataPulse repository snapshot (seeded synthetic)",
@@ -84,7 +85,7 @@ hf_token = private_setting("HF_TOKEN")
 qwen_ready = bool(admin_ok and hf_token)
 with st.sidebar.expander("Advanced service status"):
     st.write("Hosted Qwen:", "Ready for a live test" if qwen_ready else "Not enabled")
-    st.write("BigQuery:", "Admin audit available" if admin_ok and private_setting("GCP_SERVICE_ACCOUNT") else "Not enabled")
+    st.write("BigQuery in this web app:", "Admin audit available" if admin_ok and private_setting("GCP_SERVICE_ACCOUNT") else "Not connected — Colab audit is separate")
 
 use_model = False
 if admin_ok and hf_token and mode in {"Ask DataForge", "Incident investigator", "Lineage explorer", "Project guide"}:
@@ -149,7 +150,7 @@ else:
     if not admin_ok:
         st.warning("Private admin authorization is required. Configure ADMIN_DEMO_PASSWORD in Streamlit secrets.")
     elif not private_setting("GCP_SERVICE_ACCOUNT") or not private_setting("GCP_PROJECT_ID"):
-        st.warning("GCP audit credentials are not configured in private Streamlit secrets. Use the included Colab audit notebook with Google sign-in instead.")
+        st.info("This Streamlit server has no private GCP credentials. A successful Colab audit verifies Google Cloud separately; it does not authenticate this server. Use the Colab audit notebook for cloud checks. No new GCP project is required.")
     else:
         st.write("This will make read-only metadata calls and dry-run compilation requests. No query results are fetched.")
         if st.button("Run BigQuery read-only checks", type="primary"):
