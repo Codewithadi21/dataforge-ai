@@ -1,0 +1,127 @@
+{
+  "demo-project.datapulse_ai.paired_prediction_replay": {
+    "synthetic": true,
+    "columns": [
+      {
+        "name": "customer_id",
+        "sensitivity": "public",
+        "type": "STRING"
+      },
+      {
+        "name": "churned_next_30d",
+        "sensitivity": "public",
+        "type": "INTEGER"
+      },
+      {
+        "name": "predicted_churn_before",
+        "sensitivity": "public",
+        "type": "INTEGER"
+      },
+      {
+        "name": "predicted_churn_after",
+        "sensitivity": "public",
+        "type": "INTEGER"
+      },
+      {
+        "name": "predicted_churn_probability_before",
+        "sensitivity": "public",
+        "type": "FLOAT"
+      },
+      {
+        "name": "predicted_churn_probability_after",
+        "sensitivity": "public",
+        "type": "FLOAT"
+      },
+      {
+        "name": "decision_changed",
+        "sensitivity": "public",
+        "type": "BOOLEAN"
+      },
+      {
+        "name": "missed_high_risk_after",
+        "sensitivity": "public",
+        "type": "BOOLEAN"
+      }
+    ]
+  },
+  "demo-project.datapulse_ai.baseline_customers": {
+    "synthetic": true,
+    "columns": [
+      {
+        "name": "customer_id",
+        "sensitivity": "public",
+        "type": "STRING"
+      },
+      {
+        "name": "engagement_events_30d",
+        "sensitivity": "public",
+        "type": "INTEGER"
+      },
+      {
+        "name": "purchases_30d",
+        "sensitivity": "public",
+        "type": "INTEGER"
+      },
+      {
+        "name": "support_tickets_30d",
+        "sensitivity": "public",
+        "type": "INTEGER"
+      },
+      {
+        "name": "tenure_months",
+        "sensitivity": "public",
+        "type": "INTEGER"
+      },
+      {
+        "name": "spend_30d",
+        "sensitivity": "public",
+        "type": "FLOAT"
+      },
+      {
+        "name": "churned_next_30d",
+        "sensitivity": "public",
+        "type": "INTEGER"
+      }
+    ]
+  },
+  "demo-project.datapulse_ai.shifted_customers": {
+    "synthetic": true,
+    "columns": [
+      {
+        "name": "customer_id",
+        "sensitivity": "public",
+        "type": "STRING"
+      },
+      {
+        "name": "engagement_events_30d",
+        "sensitivity": "public",
+        "type": "INTEGER"
+      },
+      {
+        "name": "purchases_30d",
+        "sensitivity": "public",
+        "type": "INTEGER"
+      },
+      {
+        "name": "support_tickets_30d",
+        "sensitivity": "public",
+        "type": "INTEGER"
+      },
+      {
+        "name": "tenure_months",
+        "sensitivity": "public",
+        "type": "INTEGER"
+      },
+      {
+        "name": "spend_30d",
+        "sensitivity": "public",
+        "type": "FLOAT"
+      },
+      {
+        "name": "churned_next_30d",
+        "sensitivity": "public",
+        "type": "INTEGER"
+      }
+    ]
+  }
+}

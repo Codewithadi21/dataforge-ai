@@ -21,11 +21,12 @@ def make_public_engine() -> DataForgeEngine:
     return DataForgeEngine(settings)
 
 
-def ask_public(engine: DataForgeEngine, question: str, sql: str | None = None) -> AskResponse:
+def ask_public(engine: DataForgeEngine, question: str, sql: str | None = None,
+               project_id: str = "datapulse-demo") -> AskResponse:
     """Honor the read-only policy; never accept a cloud request from the public UI."""
     return engine.ask(AskRequest(
         question=question,
-        project_id="datapulse-demo",
+        project_id=project_id if project_id in {"datapulse-demo", "datapulse-repo-snapshot"} else "unsupported",
         sql=sql,
         cloud_dry_run=False,
     ))

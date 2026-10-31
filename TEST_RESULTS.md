@@ -1,21 +1,11 @@
-# Local verification report
+# DataForge AI — Phase 2–4 test report
 
-Verified in the artifact-building runtime on 30 October 2026.
+Local Python verification after new implementation:
 
-- Python: 3.13.5 (Linux)
-- Command: `python -m pytest -q`
-- Result: **35 passed**
-- Golden question evaluation: **26/26 passed** (intent routing and source ID checks)
-- Python code: `python -m compileall -q dataforge` completed successfully.
-- Manual CLI demonstration: `Show customers whose predictions flipped` returned a strictly scoped, synthetic, approved BigQuery SELECT draft without executing it.
+- `python -m pytest -q`: **49 tests passed** (including original MVP, independent DataPulse upstream snapshot, Qwen HTTP mock, hallucinated-numeric rejection, GitHub refresh validation, BigQuery dry-run mock, no-approval aggregate guard, and Pub/Sub metadata mock).
+- `python -m dataforge.cli eval --output eval/latest_results.json`: **26/26** deterministic routing/citation golden cases passed. This does **not** demonstrate external Qwen accuracy.
+- `python -m compileall -q ui dataforge`: passed.
 
-## Not verified by these tests
+**Not locally tested with real credentials:** Hugging Face hosted Qwen request, Streamlit Secrets and Streamlit post-deploy runtime, Google BigQuery table existence, GCP dry runs/aggregate data, Pub/Sub topology, full end-to-end DataPulse streaming delivery. The local test environment did not have cloud credentials and tests used mocks.
 
-- No Qwen weights downloaded or Qwen-generated answer validated.
-- No live DataPulse data loaded or real DataPulse repo changed.
-- No BigQuery API dry-run, Google Cloud credentials, or real tables used.
-- Public hosting helper enforces demo-only fixtures, no Qwen/cloud API (2 added safety tests).
-- No Streamlit browser session, free-Colab execution, cloud deploy or GitHub Actions run verified.
-- Retrieval routing/citation coverage is **not a factual accuracy percentage** and is not an ATS score.
-
-Run the setup yourself, inspect source citations and rerun the suite before publishing project claims.
+GitHub Actions CI runs on push and pull requests. Check the latest run before claiming a passing remote build.

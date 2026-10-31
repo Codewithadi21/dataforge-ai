@@ -1,3 +1,1 @@
-# Streamlit Community Cloud installs this project and the read-only public UI.
-# Do not install the optional [qwen] or [cloud] extras on the public demo.
--e .[ui]
+-e .[ui,cloud]

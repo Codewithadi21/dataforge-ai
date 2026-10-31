@@ -1,7 +1,7 @@
 """The safe, evidence-first orchestration layer."""
 import re
 from uuid import uuid4
-from dataforge.config import Settings, get_settings
+from dataforge.config import ROOT, Settings, get_settings
 from dataforge.schemas import AskRequest, AskResponse, Citation
 from dataforge.connectors.datapulse import DataPulseAdapter
 from dataforge.connectors.registry import ConnectorRegistry
@@ -15,6 +15,9 @@ class DataForgeEngine:
         self.settings = settings or get_settings()
         self.registry = ConnectorRegistry()
         self.registry.register(DataPulseAdapter(self.settings.data_dir, self.settings.project_id))
+        # Separate approved seeded snapshot from the illustrative demo; never mix metrics.
+        if self.settings.project_id != "datapulse-repo-snapshot":
+            self.registry.register(DataPulseAdapter(ROOT / "data" / "datapulse_repo_snapshot", "datapulse-repo-snapshot"))
         self.index = DocumentIndex(self.settings.knowledge_dir)
         self._qwen = None  # Load 1.5B model only if explicitly enabled/requested.
 
@@ -84,7 +87,7 @@ class DataForgeEngine:
                       f"Scope: {'synthetic example' if incident.get('synthetic') else 'exported record'}; "
                       "an observed drift alone does not prove model harm.")
             resp = AskResponse(answer=answer,
-                supporting_sources=[self._citation("incident:" + incident["incident_id"], "adapter:incidents.json", "incident", bool(incident.get("synthetic")))],
+                supporting_sources=[self._citation("incident:" + incident["incident_id"], (incident.get("source_urls") or ["adapter:incidents.json"])[0], "incident", bool(incident.get("synthetic")))],
                 evidence_ids=list(incident.get("evidence_ids", [])),
                 uncertainty_notes=["Root cause has not been established; reported hypotheses require investigation."],
                 recommended_checks=list(incident.get("recommended_checks", [])),
@@ -109,7 +112,7 @@ class DataForgeEngine:
             path = selected.get("nodes", [])
             resp = AskResponse(answer=f"Declared lineage for {selected['entity']}:\n" + " -> ".join(str(n) for n in path)
                 + "\nThis is declared metadata, not independently verified runtime lineage.",
-                supporting_sources=[self._citation("lineage:" + selected["entity"], "adapter:lineage.json", selected["entity"], bool(adapter.get_project_overview().get("synthetic", False)))],
+                supporting_sources=[self._citation("lineage:" + selected["entity"], selected.get("source_url", "adapter:lineage.json"), selected["entity"], bool(adapter.get_project_overview().get("synthetic", False)))],
                 evidence_ids=["lineage:" + selected["entity"]],
                 uncertainty_notes=["Validate declared edges against executed code and warehouse metadata."],
                 retrieval_mode="declared-lineage", **base)

@@ -13,3 +13,7 @@ service-account*.json
 .cache/
 /artifacts/models/
 artifacts/private/
+
+.streamlit/secrets.toml
+*.key
+*service_account*.json

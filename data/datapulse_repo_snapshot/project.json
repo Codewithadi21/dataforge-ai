@@ -1,0 +1,11 @@
+{
+  "project_id": "datapulse-repo-snapshot",
+  "name": "DataPulse AI (checked-in seeded synthetic results)",
+  "synthetic": true,
+  "source_type": "upstream_repository_snapshot",
+  "verified_local_replay_claim": "The upstream repo includes a seeded metrics file; DataForge does not claim it independently reran the ML job.",
+  "source_repository": "Codewithadi21/aegis-real-time-supply-chain-ai",
+  "source_commit": "ee4a0683f6f6ebf22da55385343a3b771f18b06c",
+  "source_url": "https://github.com/Codewithadi21/aegis-real-time-supply-chain-ai/blob/ee4a0683f6f6ebf22da55385343a3b771f18b06c/datapulse-ai/examples/verified_synthetic_results.json",
+  "live_bigquery_verified": false
+}

@@ -120,3 +120,13 @@ Large-scale embedding-based RAG, FAISS, LoRA fine-tuning, autonomous SQL executi
 - `docs/PORTFOLIO.md`: recruiter- and technical-interview versions.
 
 *Concept and requirements from the user-provided DataForge AI Future Project Blueprint (30 October 2026); software implementation created as an independent MVP.*
+
+---
+
+## Phase 2–4 upgrade: Qwen, authentic DataPulse source integration, GCP audit
+
+**Implemented:** Optional admin-gated hosted Qwen (`Qwen/Qwen3-4B-Instruct-2507:nscale` via Hugging Face Inference Providers); source-separated DataPulse GitHub seeded metrics snapshot and on-demand refresh; SQL column names matching DataPulse replay code; read-only BigQuery metadata/dry-run checks; optional explicit-consent aggregate query; Pub/Sub topology metadata checker; Colab notebook and new mocks/tests.
+
+**Still requires external verification:** a private Hugging Face token and an actual hosted Qwen response, plus a Google-authenticated Colab run to verify GCP datasets, jobs, and Pub/Sub resources. Missing credentials result in safe deterministic behavior, not fabricated cloud results. Hosted inference is restricted to admin access and three browser-session calls as a demo safeguard; this is not full production authentication or global rate limiting.
+
+Use [Phase 2–4 setup and truthful status](docs/PHASE2_3_4.md). The main Streamlit entrypoint remains `ui/cloud_app.py`. Your DataPulse repository has **not been modified**.

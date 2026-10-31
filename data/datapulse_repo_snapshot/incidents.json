@@ -1,0 +1,36 @@
+[
+  {
+    "incident_id": "DP-REPO-SYN-001",
+    "summary": "Seeded synthetic DataPulse semantic engagement definition shift affecting churn predictions.",
+    "synthetic": true,
+    "metrics": {
+      "source_rows": 5000,
+      "paired_cohort_size": 1500,
+      "prediction_flip_count": 340,
+      "prediction_flip_rate": 0.2267,
+      "baseline_auc": 0.8157,
+      "changed_auc": 0.5414,
+      "baseline_false_negatives": 238,
+      "changed_false_negatives": 458,
+      "schema_check_passed": true,
+      "semantic_check_passed": false
+    },
+    "hypotheses": [
+      "The engagement_events_30d producer definition changed from purchases to logins while schema checks still passed; the source reports failed semantic checks. This is not proof of actual business loss."
+    ],
+    "evidence_ids": [
+      "source:verified_synthetic_results.json",
+      "source:contracts.yml"
+    ],
+    "recommended_checks": [
+      "Inspect producer semantics for engagement_events_30d against the contract",
+      "Reproduce the fixed-cohort, fixed-model replay from DataPulse code",
+      "Investigate prediction flip rates, AUC and false negatives on the seeded synthetic cohort",
+      "Obtain human approval before any operational change"
+    ],
+    "source_urls": [
+      "https://github.com/Codewithadi21/aegis-real-time-supply-chain-ai/blob/ee4a0683f6f6ebf22da55385343a3b771f18b06c/datapulse-ai/examples/verified_synthetic_results.json",
+      "https://github.com/Codewithadi21/aegis-real-time-supply-chain-ai/blob/ee4a0683f6f6ebf22da55385343a3b771f18b06c/datapulse-ai/configs/contracts.yml"
+    ]
+  }
+]
