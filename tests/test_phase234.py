@@ -2,7 +2,7 @@
 import base64
 import json
 import sys
-from types import SimpleNamespace
+from types import SimpleNamespace, ModuleType
 
 import pytest
 
@@ -11,6 +11,16 @@ from dataforge.connectors.repo_refresh import refresh_public_repo_snapshot
 from dataforge.hosted import make_public_engine, ask_public
 from dataforge.models.hosted_qwen import grounded_hosted_summary, HF_ROUTER
 from dataforge.sql_tools.guard import validate_sql
+
+def mock_google_sdk(monkeypatch, module_name, fake_module):
+    """Mock optional Google Cloud SDK namespace even on clean CI runners."""
+    google_module = ModuleType("google")
+    cloud_module = ModuleType("google.cloud")
+    setattr(google_module, "cloud", cloud_module)
+    setattr(cloud_module, module_name, fake_module)
+    monkeypatch.setitem(sys.modules, "google", google_module)
+    monkeypatch.setitem(sys.modules, "google.cloud", cloud_module)
+    monkeypatch.setitem(sys.modules, "google.cloud." + module_name, fake_module)
 
 
 def test_repo_snapshot_is_distinct_and_source_grounded():
@@ -123,7 +133,7 @@ def test_cloud_audit_uses_only_read_only_bigquery_dry_run(monkeypatch):
             assert sql.startswith("SELECT COUNT(*) AS row_count FROM `demo-project.datapulse_ai.")
             assert kw["job_config"].__class__ is FakeConfig
             return SimpleNamespace(total_bytes_processed=1200)
-    monkeypatch.setitem(sys.modules,"google.cloud.bigquery",SimpleNamespace(QueryJobConfig=FakeConfig))
+    mock_google_sdk(monkeypatch, "bigquery", SimpleNamespace(QueryJobConfig=FakeConfig))
     out=audit_bigquery_dry_runs(FakeClient(),"demo-project")
     assert out["all_passed"]
     assert out["executed_queries"]==0
@@ -155,7 +165,7 @@ def test_opt_in_aggregates_hardcoded_and_byte_limited(monkeypatch):
             assert "`demo-project.datapulse_ai.paired_prediction_replay`" in sql
             assert "DROP" not in sql
             return SimpleNamespace(result=lambda **kwargs: [SimpleNamespace(tested_customers=1500,prediction_flips=340)])
-    monkeypatch.setitem(sys.modules,"google.cloud.bigquery",SimpleNamespace(QueryJobConfig=FakeConfig))
+    mock_google_sdk(monkeypatch, "bigquery", SimpleNamespace(QueryJobConfig=FakeConfig))
     r=audit_opt_in_aggregates(FakeClient(),"demo-project",approved_by_user=True)
     assert r["queries_executed"]==1
     assert r["prediction_flips"]==340
@@ -172,7 +182,7 @@ def test_pubsub_metadata_only(monkeypatch):
         def subscription_path(self,p,n): return f"projects/{p}/subscriptions/{n}"
         def get_subscription(self,request):
             return SimpleNamespace(topic="projects/demo-project/topics/datapulse-incidents")
-    monkeypatch.setitem(sys.modules,"google.cloud.pubsub_v1",SimpleNamespace(PublisherClient=Pub,SubscriberClient=Sub))
+    mock_google_sdk(monkeypatch, "pubsub_v1", SimpleNamespace(PublisherClient=Pub,SubscriberClient=Sub))
     result=audit_pubsub_topology("demo-project")
     assert result["status"]=="passed"
     assert result["messages_published"]==0
