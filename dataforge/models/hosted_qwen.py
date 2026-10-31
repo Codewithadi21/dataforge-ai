@@ -17,7 +17,7 @@ DEFAULT_MODEL = "Qwen/Qwen3-4B-Instruct-2507:nscale"  # Verify current provider 
 def _numbers(text: str) -> set[str]:
     """Normalize thousands separators so 1,500 matches 1500."""
     matches = re.findall(
-        r"(?<![A-Za-z_0-9])(?:\\d{1,3}(?:,\\d{3})+|\\d+)(?:\\.\\d+)?%?(?![A-Za-z_0-9])",
+        r"(?<![A-Za-z_0-9])(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?%?(?![A-Za-z_0-9])",
         text,
     )
     return {value.replace(",", "") for value in matches}
@@ -26,7 +26,7 @@ def _numbers(text: str) -> set[str]:
 def _allowed_numbers(evidence: str) -> set[str]:
     """Accept literal measurements and exact % conversion of documented rates only."""
     values = _numbers(evidence)
-    for key, raw in re.findall(r"\\b(prediction_flip_rate)\\s*=\\s*(0(?:\\.\\d+)?|1(?:\\.0+)?)", evidence):
+    for key, raw in re.findall(r"\b(prediction_flip_rate)\s*=\s*(0(?:\.\d+)?|1(?:\.0+)?)", evidence):
         if key == "prediction_flip_rate":
             percentage = format(Decimal(raw) * 100, "f").rstrip("0").rstrip(".")
             values.add(percentage + "%")
